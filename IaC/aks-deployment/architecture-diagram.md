@@ -22,8 +22,8 @@
                    |                   |                               |
                    |                   +------------+--------+---------+
                    |                                |        ^
-               Secure                               |        |
-               Access                               v        |
+                Secure                              |        |
+                Access                              v        |
                                     +---------------+--------+--------+   +------------------------------+
                                     |                                 |   |                              |
                                     |  Azure Cosmos DB (MongoDB API)  |   |  Azure Monitor & Insights    |

@@ -226,4 +226,4 @@ az cosmosdb keys list \
 
 ## License
 
-[MIT](LICENSE)
+[MIT](../../LICENSE.md)
