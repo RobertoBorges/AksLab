@@ -2,6 +2,10 @@
 
 This repository contains Bicep templates for deploying an Azure Kubernetes Service (AKS) cluster along with supporting Azure resources.
 
+## Architecture Diagram
+
+See [architecture-diagram.md](architecture-diagram.md) for a visual representation of the deployed resources and their relationships.
+
 ## Project Structure
 
 ```
@@ -87,6 +91,7 @@ az deployment group create `
 ## Resources Deployed
 
 - Azure Kubernetes Service (AKS) Deployment with Bicep
+  - Architecture Diagram
   - Project Structure
   - Prerequisites
   - Deployment
