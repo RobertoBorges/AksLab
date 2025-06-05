@@ -121,11 +121,15 @@ $outputs = (az deployment group show `
   --resource-group <your-resource-group-name> `
   --query properties.outputs -o json | ConvertFrom-Json)
 
+echo "Output values:" $outputs 
+
+
 # Set environment variables
 $env:AZURE_COSMOS_ACCOUNT_NAME = $outputs.cosmosDbAccountName.value
 $env:AZURE_COSMOS_CLIENTID = $outputs.mongoIdentityClientId.value
 $env:AZURE_COSMOS_LISTCONNECTIONSTRINGURL = $outputs.mongoListConnectionStringUrl.value
 $env:AZURE_COSMOS_SCOPE = "https://management.azure.com/.default"
+$env:AZURE_ACR_NAME = $outputs.containerRegistryName.value
 ```
 
 ### Run the Application Locally
@@ -169,6 +173,47 @@ The AKS deployment includes:
 - Comprehensive monitoring with Azure Monitor, Prometheus, and Grafana
 
 See the [architecture diagram](IaC/aks-deployment/architecture-diagram.md) for a visual representation of this deployment.
+
+
+## Define, build and modify container images
+
+Knowing how to package your application in a container image is key to running it in Kubernetes. The most common way to do this is to use Dockerfile and Docker CLI or Podman CLI to execute image build commands.
+
+Once the container image is built, you'll need to push it to a remote container registry. A container registry is a service that stores container images and allows you to pull them down to your local machine or to a Kubernetes cluster. There are several container registries available, with some common ones including Docker Hub or GitHub Container Registry. When using AKS, you will want to use Azure Container Registry (ACR) which is a private registry that offers several features such as geo-replication, integration with Microsoft Entra ID, artifact streaming, and even continuous vulnerability scanning and patching.
+
+### Container image manifest with Draft
+
+If you don't already have a container image for you application you can look to an open-source tool like Draft or lean on AI tools like GitHub Copilot to help you create a Dockerfile.
+
+Let's look to package the Contoso Air sample application into a container image. Run the following command to clone the repository.
+
+```bash
+cd src/web
+az aks draft create --dockerfile-only=true
+```
+
+This command will detect the application type is JavaScript (or Node.js) and create a Dockerfile for the application.
+
+### Build the container image
+
+````bash
+docker build -t contoso-air:latest .
+
+docker run -d -p 3000:3000 --name contoso-air contoso-air:latest
+````
+
+This command will run the container image and map port 3000 on the host to port 3000 in the container. You can now access the application in your browser at <http://localhost:3000/>.
+
+### Push the container image to Azure Container Registry
+```bash
+# Log in to Azure Container Registry
+az acr login --name $env:AZURE_ACR_NAME
+# Tag the image with the ACR login server
+docker tag contoso-air:latest "$($env:AZURE_ACR_NAME).azurecr.io/contoso-air:latest"
+# Push the image to ACR
+docker push "$($env:AZURE_ACR_NAME).azurecr.io/contoso-air:latest"
+```
+
 
 ## Cleanup
 
