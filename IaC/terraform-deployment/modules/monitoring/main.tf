@@ -29,15 +29,15 @@ resource "azurerm_monitor_workspace" "prometheus" {
 
 # Grafana Dashboard
 resource "azurerm_dashboard_grafana" "main" {
-  name                      = local.grafana_name
-  resource_group_name       = data.azurerm_resource_group.main.name
-  location                  = var.location
-  grafana_major_version     = "10"
-  
+  name                  = local.grafana_name
+  resource_group_name   = data.azurerm_resource_group.main.name
+  location              = var.location
+  grafana_major_version = "10"
+
   identity {
     type = "SystemAssigned"
   }
-  
+
   azure_monitor_workspace_integrations {
     resource_id = azurerm_monitor_workspace.prometheus.id
   }

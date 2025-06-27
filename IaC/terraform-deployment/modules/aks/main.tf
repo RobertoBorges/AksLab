@@ -15,7 +15,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
   location            = var.location
   resource_group_name = data.azurerm_resource_group.main.name
   dns_prefix          = "myakscluster"
-  
+
   sku_tier = "Standard"
 
   identity {
@@ -27,7 +27,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
     node_count = 2
     vm_size    = "Standard_DS2_v2"
     type       = "VirtualMachineScaleSets"
-    
+
     upgrade_settings {
       max_surge = "10%"
     }
@@ -101,8 +101,8 @@ resource "azurerm_monitor_data_collection_endpoint" "prometheus" {
 
 # Data Collection Rule Association
 resource "azurerm_monitor_data_collection_rule_association" "prometheus" {
-  name                    = "configurationAccessEndpoint"
-  target_resource_id      = azurerm_kubernetes_cluster.aks.id
+  name                        = "configurationAccessEndpoint"
+  target_resource_id          = azurerm_kubernetes_cluster.aks.id
   data_collection_endpoint_id = azurerm_monitor_data_collection_endpoint.prometheus.id
 }
 
@@ -127,13 +127,13 @@ resource "azurerm_monitor_data_collection_rule" "container_insights" {
 
   data_sources {
     extension {
-      streams            = ["Microsoft-ContainerInsights-Group-Default"]
-      extension_name     = "ContainerInsights"
+      streams        = ["Microsoft-ContainerInsights-Group-Default"]
+      extension_name = "ContainerInsights"
       extension_json = jsonencode({
         dataCollectionSettings = {
-          interval                 = "1m"
-          namespaceFilteringMode   = "Off"
-          enableContainerLogV2     = true
+          interval               = "1m"
+          namespaceFilteringMode = "Off"
+          enableContainerLogV2   = true
         }
       })
       name = "ContainerInsightsExtension"

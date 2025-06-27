@@ -36,46 +36,106 @@ terraform-deployment/
 
 ## Deployment
 
-### 1. Login to Azure
+### GitHub Actions Deployment (Recommended)
+
+This repository includes GitHub Actions workflows for automated Terraform deployment with proper state management and security practices.
+
+#### Prerequisites
+
+1. **Azure Service Principal**: Create a service principal with Contributor access to your Azure subscription
+2. **Azure Storage Account**: Set up remote state storage using the provided script
+3. **GitHub Secrets**: Configure the required secrets in your repository
+
+#### Setup Steps
+
+1. **Create Azure Service Principal**:
+   ```bash
+   # Create service principal
+   az ad sp create-for-rbac --name "terraform-github-actions" \
+     --role contributor \
+     --scopes /subscriptions/<subscription-id> \
+     --sdk-auth
+   ```
+
+2. **Set up Terraform Backend Storage**:
+   ```bash
+   # Run the setup script for each environment
+   ./scripts/setup-terraform-backend.sh -e dev -s <subscription-id>
+   ./scripts/setup-terraform-backend.sh -e prod -s <subscription-id>
+   ```
+
+3. **Configure GitHub Secrets**:
+   Add these secrets to your repository (`Settings > Secrets and variables > Actions`):
+   
+   ```
+   AZURE_CREDENTIALS          # JSON output from service principal creation
+   TF_STATE_RESOURCE_GROUP     # Resource group for state storage
+   TF_STATE_STORAGE_ACCOUNT    # Storage account name for state
+   TF_STATE_CONTAINER          # Container name (usually "tfstate")
+   USER_OBJECT_ID              # Your Azure AD Object ID
+   ```
+
+#### Workflow Triggers
+
+- **Pull Request**: Runs `terraform plan` for code review
+- **Push to main**: Runs `terraform apply` for production deployment
+- **Push to develop**: Runs `terraform apply` for development deployment  
+- **Manual Trigger**: Allows manual execution with environment and action selection
+
+#### Environment Management
+
+- **Development**: Triggered by pushes to `develop` branch or manual selection
+- **Production**: Triggered by pushes to `main` branch or manual selection
+
+### Manual Deployment (Alternative)
+
+If you prefer manual deployment or need to troubleshoot:
+
+#### 1. Login to Azure
 
 ```bash
 az login
 ```
 
-### 2. Set the subscription
+#### 2. Set the subscription
 
 ```bash
 az account set --subscription <subscription-id>
 ```
 
-### 3. Initialize Terraform
+#### 3. Initialize Terraform with Backend
 
 ```bash
-terraform init
+# Initialize with remote backend
+terraform init \
+  -backend-config="resource_group_name=<state-rg-name>" \
+  -backend-config="storage_account_name=<state-storage-name>" \
+  -backend-config="container_name=tfstate" \
+  -backend-config="key=<environment>.terraform.tfstate"
 ```
 
-### 4. Plan the deployment
+#### 4. Plan the deployment
 
 For development environment:
 ```bash
-terraform plan -var-file="environments/dev.tfvars"
+terraform plan -var-file="environments/dev.tfvars" -var="user_object_id=<your-object-id>"
 ```
 
 For production environment:
 ```bash
-terraform plan -var-file="environments/prod.tfvars"
+terraform plan -var-file="environments/prod.tfvars" -var="user_object_id=<your-object-id>"
 ```
 
-### 5. Deploy the infrastructure
+#### 5. Deploy the infrastructure
 
 For development environment:
 ```bash
-terraform apply -var-file="environments/dev.tfvars"
+terraform apply -var-file="environments/dev.tfvars" -var="user_object_id=<your-object-id>"
 ```
 
 For production environment:
 ```bash
-terraform apply -var-file="environments/prod.tfvars"
+terraform apply -var-file="environments/prod.tfvars" -var="user_object_id=<your-object-id>"
 ```
 
 ### 6. Alternative deployment with inline variables
