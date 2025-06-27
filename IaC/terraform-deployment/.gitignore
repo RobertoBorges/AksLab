@@ -1,0 +1,19 @@
+# Terraform specific files
+.terraform/
+.terraform.lock.hcl
+*.tfstate
+*.tfstate.*
+*.tfplan
+*.tfvars.backup
+
+# Crash log files
+crash.log
+crash.*.log
+
+# Environment variable files
+.env
+.envrc
+
+# OS specific files
+.DS_Store
+Thumbs.db

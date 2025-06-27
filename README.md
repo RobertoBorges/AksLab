@@ -13,7 +13,9 @@ This project consists of two main components:
 
 ### Quick Links:
 - [Local Development Setup](#getting-started-locally) - Run the app locally
-- [AKS Deployment Guide](IaC/aks-deployment/README.md) - Deploy to Azure Kubernetes Service
+- [AKS Deployment Guide (Bicep)](IaC/aks-deployment/README.md) - Deploy to Azure Kubernetes Service using Bicep
+- [AKS Deployment Guide (Terraform)](IaC/terraform-deployment/README.md) - Deploy to Azure Kubernetes Service using Terraform with GitHub Actions
+- [GitHub Actions Setup Guide](docs/github-actions-setup.md) - Automated CI/CD deployment setup
 - [Architecture Diagram](IaC/aks-deployment/architecture-diagram.md) - Visual representation of the cloud architecture
 
 ## Prerequisites
@@ -157,9 +159,19 @@ For local development and testing, use the [Getting Started Locally](#getting-st
 
 ### Option 2: AKS Deployment (Recommended for Production)
 
-For production-grade deployment to Azure Kubernetes Service, follow the detailed guide in [IaC/aks-deployment/README.md](IaC/aks-deployment/README.md).
+You have two Infrastructure as Code (IaC) options for production-grade deployment to Azure Kubernetes Service:
 
-The AKS deployment includes:
+#### Bicep Templates
+Follow the detailed guide in [IaC/aks-deployment/README.md](IaC/aks-deployment/README.md) for manual deployment using Azure Bicep templates.
+
+#### Terraform with GitHub Actions (Automated CI/CD)
+Follow the detailed guide in [IaC/terraform-deployment/README.md](IaC/terraform-deployment/README.md) for automated deployment using Terraform and GitHub Actions. This option provides:
+- Automated CI/CD pipeline with GitHub Actions
+- Remote state management with Azure Storage Account
+- Environment-specific deployments (dev/prod)
+- Security best practices with Azure service principal authentication
+
+Both deployment options include:
 - Azure Kubernetes Service with modern features:
   - Workload Identity integration
   - Azure CNI Overlay networking with Cilium

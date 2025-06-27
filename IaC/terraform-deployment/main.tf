@@ -10,7 +10,7 @@ resource "random_string" "seed" {
 }
 
 locals {
-  short_seed = var.random_seed != null ? substr(var.random_seed, 0, 4) : random_string.seed.result
+  short_seed          = var.random_seed != null ? substr(var.random_seed, 0, 4) : random_string.seed.result
   resource_group_name = var.resource_group_name != null ? var.resource_group_name : "rg-akslab-${local.short_seed}"
 }
 
@@ -60,11 +60,11 @@ module "aks" {
 module "cosmos_db" {
   source = "./modules/cosmos_db"
 
-  location              = var.location
-  random_seed           = local.short_seed
-  resource_group_name   = local.rg_name
-  aks_oidc_issuer_url   = module.aks.oidc_issuer_url
-  tags                  = var.tags
+  location            = var.location
+  random_seed         = local.short_seed
+  resource_group_name = local.rg_name
+  aks_oidc_issuer_url = module.aks.oidc_issuer_url
+  tags                = var.tags
 
   depends_on = [module.aks]
 }
@@ -72,12 +72,12 @@ module "cosmos_db" {
 module "key_vault" {
   source = "./modules/key_vault"
 
-  location              = var.location
-  random_seed           = local.short_seed
-  resource_group_name   = local.rg_name
-  user_object_id        = var.user_object_id
-  aks_oidc_issuer_url   = module.aks.oidc_issuer_url
-  tags                  = var.tags
+  location            = var.location
+  random_seed         = local.short_seed
+  resource_group_name = local.rg_name
+  user_object_id      = var.user_object_id
+  aks_oidc_issuer_url = module.aks.oidc_issuer_url
+  tags                = var.tags
 
   depends_on = [module.aks]
 }
@@ -85,12 +85,12 @@ module "key_vault" {
 module "app_configuration" {
   source = "./modules/app_configuration"
 
-  location              = var.location
-  random_seed           = local.short_seed
-  resource_group_name   = local.rg_name
-  aks_cluster_name      = module.aks.aks_cluster_name
-  aks_oidc_issuer_url   = module.aks.oidc_issuer_url
-  tags                  = var.tags
+  location            = var.location
+  random_seed         = local.short_seed
+  resource_group_name = local.rg_name
+  aks_cluster_name    = module.aks.aks_cluster_name
+  aks_oidc_issuer_url = module.aks.oidc_issuer_url
+  tags                = var.tags
 
   depends_on = [module.aks]
 }
