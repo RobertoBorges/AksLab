@@ -129,6 +129,11 @@ jobs:
 
     - name: Terraform Init
       working-directory: ${{ env.WORKING_DIR }}
+      env:
+        ARM_USE_OIDC: true
+        ARM_CLIENT_ID: ${{ secrets.AZURE_MSI_CLIENTID }}
+        ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_MSI_SUBSCRIPTIONID }}
+        ARM_TENANT_ID: ${{ secrets.AZURE_MSI_TENANTID }}
       run: |
         terraform init \
           -backend-config="resource_group_name=${{ secrets.TF_STATE_RESOURCE_GROUP }}" \
@@ -187,6 +192,11 @@ jobs:
 
     - name: Terraform Init
       working-directory: ${{ env.WORKING_DIR }}
+      env:
+        ARM_USE_OIDC: true
+        ARM_CLIENT_ID: ${{ secrets.AZURE_MSI_CLIENTID }}
+        ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_MSI_SUBSCRIPTIONID }}
+        ARM_TENANT_ID: ${{ secrets.AZURE_MSI_TENANTID }}
       run: |
         terraform init \
           -backend-config="resource_group_name=${{ secrets.TF_STATE_RESOURCE_GROUP }}" \
@@ -226,6 +236,11 @@ jobs:
 
     - name: Terraform Init
       working-directory: ${{ env.WORKING_DIR }}
+      env:
+        ARM_USE_OIDC: true
+        ARM_CLIENT_ID: ${{ secrets.AZURE_MSI_CLIENTID }}
+        ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_MSI_SUBSCRIPTIONID }}
+        ARM_TENANT_ID: ${{ secrets.AZURE_MSI_TENANTID }}
       run: |
         terraform init \
           -backend-config="resource_group_name=${{ secrets.TF_STATE_RESOURCE_GROUP }}" \
