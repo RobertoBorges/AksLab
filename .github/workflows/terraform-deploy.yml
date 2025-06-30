@@ -101,6 +101,7 @@ jobs:
         client-id: ${{ secrets.AZURE_MSI_CLIENTID }}
         tenant-id: ${{ secrets.AZURE_MSI_TENANTID }}
         subscription-id: ${{ secrets.AZURE_MSI_SUBSCRIPTIONID }}
+        auth-type: IDENTITY
 
     - name: Terraform Init
       working-directory: ${{ env.WORKING_DIR }}
