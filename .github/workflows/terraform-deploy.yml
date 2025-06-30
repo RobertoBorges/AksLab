@@ -81,6 +81,8 @@ jobs:
 
   build-and-deploy:
     runs-on: ubuntu-latest
+    environment:
+      name: 'Production'
     steps:
       - name: Login to Azure
         uses: azure/login@v2
