@@ -135,6 +135,7 @@ jobs:
         ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_MSI_SUBSCRIPTIONID }}
         ARM_TENANT_ID: ${{ secrets.AZURE_MSI_TENANTID }}
       run: |
+        $env:TF_LOG='debug'
         terraform init \
           -backend-config="resource_group_name=${{ secrets.TF_STATE_RESOURCE_GROUP }}" \
           -backend-config="storage_account_name=${{ secrets.TF_STATE_STORAGE_ACCOUNT }}" \
