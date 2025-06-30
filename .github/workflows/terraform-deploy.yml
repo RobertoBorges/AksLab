@@ -43,7 +43,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       id-token: write #This is required for requesting the JWT
-      contents: read #This is required for actions/checkout
+      contents: read #This is required for actions/checkout      
     outputs:
       environment: ${{ steps.determine-env.outputs.environment }}
     
@@ -81,6 +81,9 @@ jobs:
 
   build-and-deploy:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write #This is required for requesting the JWT
+      contents: read #This is required for actions/checkout    
     environment:
       name: 'Production'
     steps:
