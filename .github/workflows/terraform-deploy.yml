@@ -89,6 +89,7 @@ jobs:
           tenant-id: ${{ secrets.AZURE_MSI_TENANTID }}
           subscription-id: ${{ secrets.AZURE_MSI_SUBSCRIPTIONID }}
           auth-type: IDENTITY
+          enable-AzPSSession: true
 
       - name: Azure CLI script
         uses: azure/cli@v2
