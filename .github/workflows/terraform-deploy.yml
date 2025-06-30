@@ -79,6 +79,24 @@ jobs:
       working-directory: ${{ env.WORKING_DIR }}
       run: terraform validate
 
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_MSI_CLIENTID }}
+          tenant-id: ${{ secrets.AZURE_MSI_TENANTID }}
+          subscription-id: ${{ secrets.AZURE_MSI_SUBSCRIPTIONID }}
+          auth-type: IDENTITY
+
+      - name: Azure CLI script
+        uses: azure/cli@v2
+        with:
+          azcliversion: latest
+          inlineScript: |
+            az account show
+            
   terraform-plan:
     name: 'Terraform Plan'
     runs-on: ubuntu-latest
