@@ -79,28 +79,6 @@ jobs:
       working-directory: ${{ env.WORKING_DIR }}
       run: terraform validate
 
-  build-and-deploy:
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write #This is required for requesting the JWT
-      contents: read #This is required for actions/checkout
-    environment:
-      name: ${{ needs.terraform-check.outputs.environment }}
-    steps:
-      - name: Login to Azure
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZURE_MSI_CLIENTID }}
-          tenant-id: ${{ secrets.AZURE_MSI_TENANTID }}
-          subscription-id: ${{ secrets.AZURE_MSI_SUBSCRIPTIONID }}
-          
-      - name: Azure CLI script
-        uses: azure/cli@v2
-        with:
-          azcliversion: latest
-          inlineScript: |
-            az account show
-            
   terraform-plan:
     name: 'Terraform Plan'
     runs-on: ubuntu-latest
@@ -139,8 +117,7 @@ jobs:
         terraform init \
           -backend-config="resource_group_name=${{ secrets.TF_STATE_RESOURCE_GROUP }}" \
           -backend-config="storage_account_name=${{ secrets.TF_STATE_STORAGE_ACCOUNT }}" \
-          -backend-config="container_name=${{ secrets.TF_STATE_CONTAINER }}" \
-          -backend-config="key=${{ needs.terraform-check.outputs.environment }}.terraform.tfstate"
+          -backend-config="container_name=${{ secrets.TF_STATE_CONTAINER }}"
 
     - name: Terraform Plan
       working-directory: ${{ env.WORKING_DIR }}
