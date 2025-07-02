@@ -4,6 +4,8 @@ A sample airline booking application used for demos and learning purposes.
 
 This repository is a revived and modernized version of the previously archived [microsoft/ContosoAir](https://github.com/microsoft/ContosoAir) demo project. This version has been updated with current technology standards including Node.js 22, Azure CosmosDB with MongoDB API 7.0, and modern authentication via Azure Managed Identity. While maintaining its original purpose, the codebase now features a completely refreshed infrastructure.
 
+**🏗️ Layer 0 Foundation**: This project provides a complete **Layer 0** implementation for cloud-native applications on Azure, establishing the essential infrastructure foundations including container orchestration, identity management, observability, and security. See the [Layer 0 Foundation Guide](LAYER-0.md) for a comprehensive overview of the foundational concepts and architecture.
+
 ## Repository Organization
 
 This project consists of two main components:
@@ -12,6 +14,8 @@ This project consists of two main components:
 2. **Infrastructure (`IaC/`)** - Azure infrastructure templates to deploy the application at scale
 
 ### Quick Links:
+- [Layer 0 Foundation Guide](LAYER-0.md) - Understand the foundational infrastructure concepts
+- [Camada 0 (Português)](CAMADA-0.md) - Conceitos fundamentais da infraestrutura (Portuguese)
 - [Local Development Setup](#getting-started-locally) - Run the app locally
 - [AKS Deployment Guide (Bicep)](IaC/aks-deployment/README.md) - Deploy to Azure Kubernetes Service using Bicep
 - [AKS Deployment Guide (Terraform)](IaC/terraform-deployment/README.md) - Deploy to Azure Kubernetes Service using Terraform with GitHub Actions
