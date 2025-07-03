@@ -120,8 +120,13 @@ jobs:
 
     - name: Terraform Plan
       working-directory: ${{ env.WORKING_DIR }}
+      env:
+        ARM_USE_OIDC: true
+        ARM_CLIENT_ID: ${{ secrets.AZURE_MSI_CLIENTID }}
+        ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_MSI_SUBSCRIPTIONID }}
+        ARM_TENANT_ID: ${{ secrets.AZURE_MSI_TENANTID }}
       run: |
-        terraform plan \
+        terraform plan -input=false \
           -var-file="environments/${{ needs.terraform-check.outputs.environment }}.tfvars" \
           -var="user_object_id=${{ secrets.USER_OBJECT_ID }}" \
           -out="${{ needs.terraform-check.outputs.environment }}.tfplan"
@@ -183,7 +188,12 @@ jobs:
 
     - name: Terraform Apply
       working-directory: ${{ env.WORKING_DIR }}
-      run: terraform apply -auto-approve "${{ needs.terraform-check.outputs.environment }}.tfplan"
+      env:
+        ARM_USE_OIDC: true
+        ARM_CLIENT_ID: ${{ secrets.AZURE_MSI_CLIENTID }}
+        ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_MSI_SUBSCRIPTIONID }}
+        ARM_TENANT_ID: ${{ secrets.AZURE_MSI_TENANTID }}
+      run: terraform apply -input=false -auto-approve "${{ needs.terraform-check.outputs.environment }}.tfplan"
 
   terraform-destroy:
     name: 'Terraform Destroy'
