@@ -32,6 +32,7 @@ on:
           - plan
           - apply
           - destroy
+          - refresh
 
 env:
   TF_VERSION: '1.9.8'
@@ -155,6 +156,7 @@ jobs:
         name: terraform-plan-${{ needs.terraform-check.outputs.environment }}
         path: ${{ env.WORKING_DIR }}/${{ needs.terraform-check.outputs.environment }}.tfplan
         retention-days: 5
+        if-no-files-found: error # Ensures the job fails if plan wasn't created
 
   terraform-apply:
     name: 'Terraform Apply'
@@ -189,6 +191,16 @@ jobs:
       with:
         name: terraform-plan-${{ needs.terraform-check.outputs.environment }}
         path: ${{ env.WORKING_DIR }}
+
+    - name: Verify Plan File Exists
+      working-directory: ${{ env.WORKING_DIR }}
+      run: |
+        if [ ! -f "${{ needs.terraform-check.outputs.environment }}.tfplan" ]; then
+          echo "Error: Plan file not found at ${{ env.WORKING_DIR }}/${{ needs.terraform-check.outputs.environment }}.tfplan"
+          ls -la
+          exit 1
+        fi
+        echo "Plan file found at ${{ env.WORKING_DIR }}/${{ needs.terraform-check.outputs.environment }}.tfplan"
 
     - name: Terraform Init
       working-directory: ${{ env.WORKING_DIR }}
@@ -270,3 +282,95 @@ jobs:
       run: |
         terraform destroy -auto-approve -input=false \
           -var-file="environments/${{ needs.terraform-check.outputs.environment }}.tfvars"
+
+  terraform-refresh:
+    name: 'Terraform State Refresh'
+    runs-on: ubuntu-latest
+    needs: terraform-check
+    permissions:
+      id-token: write #This is required for requesting the JWT
+      contents: read #This is required for actions/checkout    
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.action == 'refresh'
+    environment: ${{ needs.terraform-check.outputs.environment }}
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: ${{ env.TF_VERSION }}
+
+    - name: Login to Azure
+      uses: azure/login@v2
+      with:
+        client-id: ${{ secrets.AZURE_MSI_CLIENTID }}
+        tenant-id: ${{ secrets.AZURE_MSI_TENANTID }}
+        subscription-id: ${{ secrets.AZURE_MSI_SUBSCRIPTIONID }}
+
+    - name: Terraform Init
+      working-directory: ${{ env.WORKING_DIR }}
+      timeout-minutes: 5
+      env:
+        ARM_USE_OIDC: true
+        ARM_USE_AZUREAD: true
+        ARM_CLIENT_ID: ${{ secrets.AZURE_MSI_CLIENTID }}
+        ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_MSI_SUBSCRIPTIONID }}
+        ARM_TENANT_ID: ${{ secrets.AZURE_MSI_TENANTID }}
+      run: |
+        # Set debug logging for troubleshooting
+        export TF_LOG=DEBUG
+        
+        terraform init -input=false \
+          -backend-config="resource_group_name=${{ secrets.TF_STATE_RESOURCE_GROUP }}" \
+          -backend-config="storage_account_name=${{ secrets.TF_STATE_STORAGE_ACCOUNT }}" \
+          -backend-config="container_name=${{ secrets.TF_STATE_CONTAINER }}" \
+          -backend-config="key=${{ needs.terraform-check.outputs.environment }}.terraform.tfstate" \
+          -backend-config="use_oidc=true" \
+          -backend-config="use_azuread_auth=true"
+
+    - name: Terraform Refresh State
+      working-directory: ${{ env.WORKING_DIR }}
+      timeout-minutes: 30
+      env:
+        ARM_USE_OIDC: true
+        ARM_USE_AZUREAD: true
+        TF_LOG: INFO
+        ARM_CLIENT_ID: ${{ secrets.AZURE_MSI_CLIENTID }}
+        ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_MSI_SUBSCRIPTIONID }}
+        ARM_TENANT_ID: ${{ secrets.AZURE_MSI_TENANTID }}
+      run: |
+        echo "Starting state refresh for environment: ${{ needs.terraform-check.outputs.environment }}"
+        terraform apply -refresh-only -auto-approve -input=false \
+          -var-file="environments/${{ needs.terraform-check.outputs.environment }}.tfvars" | tee terraform_refresh.log
+        
+        # Check for potential issues in the log
+        if grep -q "Error:" terraform_refresh.log; then
+          echo "Warning: Errors detected during refresh. Review the logs carefully."
+        fi
+
+    - name: Backup Terraform State
+      if: success()
+      working-directory: ${{ env.WORKING_DIR }}
+      env:
+        ARM_USE_OIDC: true
+        ARM_USE_AZUREAD: true
+        ARM_CLIENT_ID: ${{ secrets.AZURE_MSI_CLIENTID }}
+        ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_MSI_SUBSCRIPTIONID }}
+        ARM_TENANT_ID: ${{ secrets.AZURE_MSI_TENANTID }}
+      run: |
+        TIMESTAMP=$(date +%Y%m%d%H%M%S)
+        terraform state pull > "terraform-state-${{ needs.terraform-check.outputs.environment }}-${TIMESTAMP}.backup"
+        
+        # Create directory for state backups
+        mkdir -p ./state-backups
+        cp "terraform-state-${{ needs.terraform-check.outputs.environment }}-${TIMESTAMP}.backup" ./state-backups/
+
+    - name: Upload State Backup
+      if: success()
+      uses: actions/upload-artifact@v4
+      with:
+        name: terraform-state-backup-${{ needs.terraform-check.outputs.environment }}
+        path: ${{ env.WORKING_DIR }}/state-backups/
+        retention-days: 30
