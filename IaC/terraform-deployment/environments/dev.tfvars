@@ -1,7 +1,7 @@
 # Development environment variables
 
 random_seed = "dev001"
-location    = "Canada Central"
+location    = "canadacentral"
 
 tags = {
   Environment = "Development"

@@ -7,7 +7,7 @@ variable "random_seed" {
 variable "location" {
   description = "Azure region to deploy resources"
   type        = string
-  default     = "Canada Central"
+  default     = "canadacentral"
 }
 
 variable "resource_group_name" {

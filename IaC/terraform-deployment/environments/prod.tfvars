@@ -1,7 +1,7 @@
 # Production environment variables
 
 random_seed = "prod01"
-location    = "Canada Central"
+location    = "canadacentral"
 
 tags = {
   Environment = "Production"
