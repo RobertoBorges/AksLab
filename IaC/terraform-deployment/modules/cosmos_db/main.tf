@@ -17,7 +17,7 @@ resource "azurerm_cosmosdb_account" "mongo" {
   resource_group_name = data.azurerm_resource_group.main.name
   offer_type          = "Standard"
   kind                = "MongoDB"
-  mongo_server_version = "4.2"
+  mongo_server_version = "4.0"
 
   capabilities {
     name = "EnableServerless"
