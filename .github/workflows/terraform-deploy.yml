@@ -91,6 +91,11 @@ jobs:
       working-directory: ${{ env.WORKING_DIR }}
       run: terraform validate
 
+    - name: Add Environment Annotation
+      run: |
+        echo "::notice title=Environment::Using environment: ${{ steps.determine-env.outputs.environment }}"
+        echo "::notice title=Terraform Version::Using Terraform version: ${{ env.TF_VERSION }}"
+
   terraform-plan:
     name: 'Terraform Plan'
     runs-on: ubuntu-latest
@@ -157,6 +162,14 @@ jobs:
         path: ${{ env.WORKING_DIR }}/${{ needs.terraform-check.outputs.environment }}.tfplan
         retention-days: 5
         if-no-files-found: error # Ensures the job fails if plan wasn't created
+        
+    - name: Add Job Summary
+      run: |
+        echo "## Terraform Plan Summary" >> $GITHUB_STEP_SUMMARY
+        echo "✅ **Environment**: ${{ needs.terraform-check.outputs.environment }}" >> $GITHUB_STEP_SUMMARY
+        echo "📁 **Working Directory**: ${{ env.WORKING_DIR }}" >> $GITHUB_STEP_SUMMARY
+        echo "📅 **Execution Time**: $(date)" >> $GITHUB_STEP_SUMMARY
+        echo "🔄 **Workflow Run**: [View Run Details](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> $GITHUB_STEP_SUMMARY
 
   terraform-apply:
     name: 'Terraform Apply'
@@ -229,6 +242,14 @@ jobs:
         ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_MSI_SUBSCRIPTIONID }}
         ARM_TENANT_ID: ${{ secrets.AZURE_MSI_TENANTID }}
       run: terraform apply -input=false -auto-approve "${{ needs.terraform-check.outputs.environment }}.tfplan"
+      
+    - name: Add Job Summary
+      run: |
+        echo "## Terraform Apply Summary" >> $GITHUB_STEP_SUMMARY
+        echo "✅ **Environment**: ${{ needs.terraform-check.outputs.environment }}" >> $GITHUB_STEP_SUMMARY
+        echo "📁 **Working Directory**: ${{ env.WORKING_DIR }}" >> $GITHUB_STEP_SUMMARY
+        echo "📅 **Execution Time**: $(date)" >> $GITHUB_STEP_SUMMARY
+        echo "🔄 **Workflow Run**: [View Run Details](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> $GITHUB_STEP_SUMMARY
 
   terraform-destroy:
     name: 'Terraform Destroy'
@@ -282,6 +303,14 @@ jobs:
       run: |
         terraform destroy -auto-approve -input=false \
           -var-file="environments/${{ needs.terraform-check.outputs.environment }}.tfvars"
+          
+    - name: Add Job Summary
+      run: |
+        echo "## Terraform Destroy Summary" >> $GITHUB_STEP_SUMMARY
+        echo "⚠️ **Environment**: ${{ needs.terraform-check.outputs.environment }}" >> $GITHUB_STEP_SUMMARY
+        echo "📁 **Working Directory**: ${{ env.WORKING_DIR }}" >> $GITHUB_STEP_SUMMARY
+        echo "📅 **Execution Time**: $(date)" >> $GITHUB_STEP_SUMMARY
+        echo "🔄 **Workflow Run**: [View Run Details](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> $GITHUB_STEP_SUMMARY
 
   terraform-refresh:
     name: 'Terraform State Refresh'
@@ -374,3 +403,12 @@ jobs:
         name: terraform-state-backup-${{ needs.terraform-check.outputs.environment }}
         path: ${{ env.WORKING_DIR }}/state-backups/
         retention-days: 30
+        
+    - name: Add Job Summary
+      run: |
+        echo "## Terraform Refresh Summary" >> $GITHUB_STEP_SUMMARY
+        echo "🔄 **Environment**: ${{ needs.terraform-check.outputs.environment }}" >> $GITHUB_STEP_SUMMARY
+        echo "📁 **Working Directory**: ${{ env.WORKING_DIR }}" >> $GITHUB_STEP_SUMMARY
+        echo "📅 **Execution Time**: $(date)" >> $GITHUB_STEP_SUMMARY
+        echo "💾 **State Backup**: Created with timestamp $(date +%Y%m%d%H%M%S)" >> $GITHUB_STEP_SUMMARY
+        echo "🔄 **Workflow Run**: [View Run Details](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> $GITHUB_STEP_SUMMARY
