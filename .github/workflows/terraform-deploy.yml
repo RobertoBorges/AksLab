@@ -54,13 +54,24 @@ jobs:
     - name: Determine Environment
       id: determine-env
       run: |
+        # Debug information
+        echo "Event name: ${{ github.event_name }}"
+        echo "GitHub ref: ${{ github.ref }}"
+        echo "Selected environment: ${{ github.event.inputs.environment }}"
+        
         if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+          echo "Setting environment to: ${{ github.event.inputs.environment }}"
           echo "environment=${{ github.event.inputs.environment }}" >> $GITHUB_OUTPUT
         elif [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+          echo "Setting environment to: prod (main branch)"
           echo "environment=prod" >> $GITHUB_OUTPUT
         else
+          echo "Setting environment to: dev (default)"
           echo "environment=dev" >> $GITHUB_OUTPUT
         fi
+        
+        # Verify what was set
+        echo "Final environment value: $(cat $GITHUB_OUTPUT | grep environment | cut -d'=' -f2)"
 
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v3
@@ -250,6 +261,12 @@ jobs:
 
     - name: Terraform Destroy
       working-directory: ${{ env.WORKING_DIR }}
+      env:
+        ARM_USE_OIDC: true
+        ARM_USE_AZUREAD: true
+        ARM_CLIENT_ID: ${{ secrets.AZURE_MSI_CLIENTID }}
+        ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_MSI_SUBSCRIPTIONID }}
+        ARM_TENANT_ID: ${{ secrets.AZURE_MSI_TENANTID }}
       run: |
-        terraform destroy -auto-approve \
+        terraform destroy -auto-approve -input=false \
           -var-file="environments/${{ needs.terraform-check.outputs.environment }}.tfvars"
