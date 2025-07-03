@@ -107,16 +107,24 @@ jobs:
 
     - name: Terraform Init
       working-directory: ${{ env.WORKING_DIR }}
+      timeout-minutes: 5
       env:
         ARM_USE_OIDC: true
+        ARM_USE_AZUREAD: true
         ARM_CLIENT_ID: ${{ secrets.AZURE_MSI_CLIENTID }}
         ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_MSI_SUBSCRIPTIONID }}
         ARM_TENANT_ID: ${{ secrets.AZURE_MSI_TENANTID }}
       run: |
-        terraform init \
+        # Set debug logging for troubleshooting
+        export TF_LOG=DEBUG
+        
+        terraform init -input=false \
           -backend-config="resource_group_name=${{ secrets.TF_STATE_RESOURCE_GROUP }}" \
           -backend-config="storage_account_name=${{ secrets.TF_STATE_STORAGE_ACCOUNT }}" \
-          -backend-config="container_name=${{ secrets.TF_STATE_CONTAINER }}"
+          -backend-config="container_name=${{ secrets.TF_STATE_CONTAINER }}" \
+          -backend-config="key=${{ needs.terraform-check.outputs.environment }}.terraform.tfstate" \
+          -backend-config="use_oidc=true" \
+          -backend-config="use_azuread_auth=true"
 
     - name: Terraform Plan
       working-directory: ${{ env.WORKING_DIR }}
