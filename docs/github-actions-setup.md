@@ -43,14 +43,6 @@ chmod +x scripts/setup-terraform-backend.sh
 
 The script will output the values you need for GitHub secrets.
 
-## Step 3: Get Your Azure AD Object ID
-
-Get your Azure AD Object ID for the user_object_id variable:
-
-```bash
-az ad signed-in-user show --query id -o tsv
-```
-
 ## Step 4: Configure GitHub Secrets
 
 Go to your GitHub repository and navigate to `Settings > Secrets and variables > Actions`.
@@ -63,7 +55,6 @@ Create the following **Repository secrets**:
 | `TF_STATE_RESOURCE_GROUP` | Resource group for Terraform state | `rg-terraform-state-dev` |
 | `TF_STATE_STORAGE_ACCOUNT` | Storage account for Terraform state | `tfstatedev12345678` |
 | `TF_STATE_CONTAINER` | Container name for state files | `tfstate` |
-| `USER_OBJECT_ID` | Your Azure AD Object ID | `12345678-1234-1234-1234-123456789012` |
 
 ### Setting up Environment-specific Secrets
 
@@ -95,7 +86,6 @@ You can also trigger deployments manually:
 
 1. **Authentication Failed**: Verify your `AZURE_CREDENTIALS` secret is valid
 2. **State Storage Access Denied**: Ensure the service principal has access to the storage account
-3. **Invalid Object ID**: Verify `USER_OBJECT_ID` is correct using `az ad signed-in-user show`
 
 ### Checking Workflow Logs
 

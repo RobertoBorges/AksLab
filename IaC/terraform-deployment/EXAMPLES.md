@@ -22,10 +22,7 @@ This directory contains example Terraform configurations and deployment scripts 
    
    # Set your subscription
    az account set --subscription "your-subscription-id"
-   
-   # Get your user object ID
-   USER_OBJECT_ID=$(az ad signed-in-user show --query id -o tsv)
-   echo "Your user object ID: $USER_OBJECT_ID"
+
    ```
 
 3. **Deploy Infrastructure**
@@ -34,10 +31,10 @@ This directory contains example Terraform configurations and deployment scripts 
    terraform init
    
    # Plan deployment
-   terraform plan -var="user_object_id=$USER_OBJECT_ID" -var="random_seed=mylab01"
+   terraform plan -var="random_seed=mylab01"
    
    # Apply deployment
-   terraform apply -var="user_object_id=$USER_OBJECT_ID" -var="random_seed=mylab01"
+   terraform apply -var="random_seed=mylab01"
    ```
 
 4. **Connect to AKS**
@@ -55,13 +52,13 @@ This directory contains example Terraform configurations and deployment scripts 
 
 ### Development Environment
 ```bash
-# Update environments/dev.tfvars with your user_object_id
+# Update environments/dev.tfvars
 terraform apply -var-file="environments/dev.tfvars"
 ```
 
 ### Production Environment
 ```bash
-# Update environments/prod.tfvars with your user_object_id
+# Update environments/prod.tfvars
 terraform apply -var-file="environments/prod.tfvars"
 ```
 
@@ -69,7 +66,7 @@ terraform apply -var-file="environments/prod.tfvars"
 
 ```bash
 # Destroy all resources
-terraform destroy -var="user_object_id=$USER_OBJECT_ID" -var="random_seed=mylab01"
+terraform destroy -var="random_seed=mylab01"
 ```
 
 ## Troubleshooting

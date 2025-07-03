@@ -72,7 +72,6 @@ This repository includes GitHub Actions workflows for automated Terraform deploy
    TF_STATE_RESOURCE_GROUP     # Resource group for state storage
    TF_STATE_STORAGE_ACCOUNT    # Storage account name for state
    TF_STATE_CONTAINER          # Container name (usually "tfstate")
-   USER_OBJECT_ID              # Your Azure AD Object ID
    ```
 
 #### Workflow Triggers
@@ -118,37 +117,34 @@ terraform init \
 
 For development environment:
 ```bash
-terraform plan -var-file="environments/dev.tfvars" -var="user_object_id=<your-object-id>"
+terraform plan -var-file="environments/dev.tfvars"
 ```
 
 For production environment:
 ```bash
-terraform plan -var-file="environments/prod.tfvars" -var="user_object_id=<your-object-id>"
+terraform plan -var-file="environments/prod.tfvars"
 ```
 
 #### 5. Deploy the infrastructure
 
 For development environment:
 ```bash
-terraform apply -var-file="environments/dev.tfvars" -var="user_object_id=<your-object-id>"
+terraform apply -var-file="environments/dev.tfvars"
 ```
 
 For production environment:
 ```bash
-terraform apply -var-file="environments/prod.tfvars" -var="user_object_id=<your-object-id>"
+terraform apply -var-file="environments/prod.tfvars"
 ```
 
 ### 6. Alternative deployment with inline variables
 
 ```bash
-# Get your Azure AD Object ID (for user_object_id variable)
-USER_OBJECT_ID=$(az ad signed-in-user show --query id -o tsv)
 
 # Deploy with inline variables
 terraform apply \
   -var="random_seed=dev001" \
-  -var="user_object_id=$USER_OBJECT_ID" \
-  -var="location=eastus"
+  -var="location=canadacentral"
 ```
 
 ## Resources Deployed
@@ -169,7 +165,6 @@ terraform apply \
 The deployment can be customized by modifying the variable files in the `environments` directory or by providing variables inline. Key configuration parameters include:
 
 - `random_seed`: String used to generate unique resource names
-- `user_object_id`: The Azure AD Object ID of the user who will have admin access
 - `location`: Azure region for resource deployment
 
 ## Accessing the AKS Cluster

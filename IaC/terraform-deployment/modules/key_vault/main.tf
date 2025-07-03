@@ -53,11 +53,3 @@ resource "azurerm_role_assignment" "key_vault_identity" {
   principal_id         = azurerm_user_assigned_identity.key_vault.principal_id
   principal_type       = "ServicePrincipal"
 }
-
-# RBAC role assignment for Key Vault access (for user)
-resource "azurerm_role_assignment" "key_vault_user" {
-  scope                = azurerm_key_vault.main.id
-  role_definition_name = "Key Vault Administrator"
-  principal_id         = var.user_object_id
-  principal_type       = "User"
-}

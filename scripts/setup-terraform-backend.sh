@@ -7,7 +7,7 @@ set -e
 
 # Default values
 ENVIRONMENT="dev"
-LOCATION="East US"
+LOCATION="Canada Central"
 SUBSCRIPTION_ID=""
 
 # Parse command line arguments
@@ -29,7 +29,7 @@ while [[ $# -gt 0 ]]; do
       echo "Usage: $0 [OPTIONS]"
       echo "Options:"
       echo "  -e, --environment    Environment (dev/prod) [default: dev]"
-      echo "  -l, --location       Azure location [default: East US]"
+      echo "  -l, --location       Azure location [default: Canada Central]"
       echo "  -s, --subscription   Azure subscription ID [required]"
       echo "  -h, --help           Show this help message"
       exit 0

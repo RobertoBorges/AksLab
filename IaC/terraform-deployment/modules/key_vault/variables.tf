@@ -13,12 +13,6 @@ variable "resource_group_name" {
   type        = string
 }
 
-variable "user_object_id" {
-  description = "Object ID of the user to grant Key Vault Administrator permissions"
-  type        = string
-  sensitive   = true
-}
-
 variable "aks_oidc_issuer_url" {
   description = "AKS OIDC issuer URL for workload identity"
   type        = string

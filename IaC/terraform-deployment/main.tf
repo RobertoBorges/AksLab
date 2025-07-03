@@ -75,7 +75,6 @@ module "key_vault" {
   location            = var.location
   random_seed         = local.short_seed
   resource_group_name = local.rg_name
-  user_object_id      = var.user_object_id
   aks_oidc_issuer_url = module.aks.oidc_issuer_url
   tags                = var.tags
 

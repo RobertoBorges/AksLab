@@ -85,7 +85,7 @@ az deployment group create `
   --name aks-deployment `
   --resource-group <resource-group-name> `
   --template-file main.bicep `
-  --parameters randomSeed=dev001 userObjectId=$userObjectId location=eastus
+  --parameters randomSeed=dev001 userObjectId=$userObjectId location=canadacentral
 ```
 
 ## Resources Deployed

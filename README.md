@@ -45,7 +45,7 @@ Write-Output "Random resource identifier will be: $RAND"
 $AZURE_SUBSCRIPTION_ID = (az account show --query id -o tsv)
 $AZURE_RESOURCE_GROUP_NAME = "rg-contosoair$RAND"
 $AZURE_COSMOS_ACCOUNT_NAME = "db-contosoair$RAND"
-$AZURE_REGION = "eastus"
+$AZURE_REGION = "canadacentral"
 
 # Create resource group
 az group create `
@@ -111,7 +111,7 @@ az deployment group create `
   --name dev-deployment `
   --resource-group <your-resource-group-name> `
   --template-file main.bicep `
-  --parameters randomSeed=dev001 userObjectId=$userObjectId location=eastus
+  --parameters randomSeed=dev001 userObjectId=$userObjectId location=canadacentral
 ```
 
 After deployment, extract the required connection information from the output:

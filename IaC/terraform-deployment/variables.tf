@@ -4,16 +4,10 @@ variable "random_seed" {
   default     = null
 }
 
-variable "user_object_id" {
-  description = "The object ID of the user to assign admin permissions"
-  type        = string
-  sensitive   = true
-}
-
 variable "location" {
   description = "Azure region to deploy resources"
   type        = string
-  default     = "East US"
+  default     = "Canada Central"
 }
 
 variable "resource_group_name" {
