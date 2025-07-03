@@ -86,7 +86,9 @@ jobs:
     permissions:
       id-token: write #This is required for requesting the JWT
       contents: read #This is required for actions/checkout
-    if: github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.event.inputs.action == 'plan')
+    if: github.event_name == 'pull_request' || 
+        (github.event_name == 'workflow_dispatch' && (github.event.inputs.action == 'plan' || github.event.inputs.action == 'apply')) || 
+        (github.ref == 'refs/heads/main' && github.event_name == 'push')
     environment: ${{ needs.terraform-check.outputs.environment }}
     
     steps:
@@ -150,7 +152,7 @@ jobs:
     permissions:
       id-token: write #This is required for requesting the JWT
       contents: read #This is required for actions/checkout    
-    needs: [terraform-check]
+    needs: [terraform-check, terraform-plan]
     if: |
       (github.ref == 'refs/heads/main' && github.event_name == 'push') ||
       (github.event_name == 'workflow_dispatch' && github.event.inputs.action == 'apply')
