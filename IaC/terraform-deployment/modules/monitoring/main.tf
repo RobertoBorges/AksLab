@@ -32,7 +32,7 @@ resource "azurerm_dashboard_grafana" "main" {
   name                  = local.grafana_name
   resource_group_name   = data.azurerm_resource_group.main.name
   location              = var.location
-  grafana_major_version = "10"
+  grafana_major_version = "11"
 
   identity {
     type = "SystemAssigned"
