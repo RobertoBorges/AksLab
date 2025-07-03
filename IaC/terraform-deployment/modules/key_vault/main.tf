@@ -2,8 +2,8 @@
 # Deploys an Azure Key Vault and configures workload identity access
 
 locals {
-  key_vault_name          = "mykeyvault${var.random_seed}"
-  key_vault_identity_name = "mykeyvault${var.random_seed}-identity"
+  key_vault_name          = "myakskeyvault${var.random_seed}"
+  key_vault_identity_name = "myakskeyvault${var.random_seed}-identity"
 }
 
 data "azurerm_resource_group" "main" {

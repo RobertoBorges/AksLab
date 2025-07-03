@@ -14,8 +14,8 @@ param userObjectId string
 param aksOidcIssuerUrl string
 
 // Resource names
-var keyVaultName = 'mykeyvault${randomSeed}'
-var keyVaultIdentityName = 'mykeyvault${randomSeed}-identity'
+var keyVaultName = 'myakskeyvault${randomSeed}'
+var keyVaultIdentityName = 'myakskeyvault${randomSeed}-identity'
 
 // Role definitions
 var keyVaultAdministratorRole = subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '00482a5a-887f-4fb3-b363-3b7fe8e74483')
