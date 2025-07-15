@@ -1,0 +1,20 @@
+# Example Terraform variables file
+# Copy this file to terraform.tfvars and modify the values as needed
+
+# Unique identifier for resources - must be unique across Azure
+random_seed = "dev001"
+
+# Azure region where resources will be deployed
+location = "canadacentral"
+
+# Optional: Use existing resource group instead of creating new one
+# resource_group_name = "my-existing-rg"
+
+# Tags to apply to all resources
+tags = {
+  Environment = "Development"
+  Project     = "AKS Lab"
+  ManagedBy   = "Terraform"
+  Owner       = "DevTeam"
+  CostCenter  = "IT"
+}

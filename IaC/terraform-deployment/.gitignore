@@ -6,6 +6,11 @@
 *.tfplan
 *.tfvars.backup
 
+# Local terraform variable files (keep .example files)
+terraform.tfvars
+*.auto.tfvars
+*.auto.tfvars.json
+
 # Crash log files
 crash.log
 crash.*.log
@@ -14,6 +19,35 @@ crash.*.log
 .env
 .envrc
 
+# Debug and log files
+terraform.log
+*.log
+
+# Backup files
+*.backup
+*.bak
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
 # OS specific files
 .DS_Store
 Thumbs.db
+
+# Azure CLI files
+.azure/
+
+# Security scan results
+tfsec_results.json
+checkov_results.json
+
+# Temporary files
+*.tmp
+*.temp
+
+# State backups
+state-backups/
