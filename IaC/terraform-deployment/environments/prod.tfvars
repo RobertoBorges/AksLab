@@ -9,4 +9,7 @@ tags = {
   ManagedBy   = "Terraform"
   Owner       = "OpsTeam"
   CostCenter  = "Engineering"
+  Backup      = "Required"
+  Compliance  = "SOC2"
+  Monitoring  = "24x7"
 }
